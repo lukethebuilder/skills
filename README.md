@@ -44,7 +44,7 @@ Runs a structured audit of your `CLAUDE.md` and generates a migration plan to th
 Install into a Claude Code project using the `skills` CLI with the `--agent claude` flag:
 
 ```bash
-npx skills@latest add lukethebuilder/skills/agent-config-migrate --agent claude
+npx skills@latest add lukethebuilder/skills/agent-config-migrate --agent claude-code
 ```
 
 By default, `skills` installs into `.agents/skills/`. The `--agent claude` flag maps the install to `.claude/skills/` instead, which is where Claude Code looks for project-level skills.

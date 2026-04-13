@@ -108,3 +108,9 @@ The skill will ask for confirmation before writing anything.
 - **Configurable thresholds** — flags like `--min-savings 30` to suppress migration recommendations below a token savings threshold
 - **Description quality pass** — a follow-on mode that scores generated skill descriptions and suggests improvements based on trigger phrase specificity
 - **Cursor Rules export** — a `--cursor` flag to emit `.cursorrules` equivalents alongside the Claude-specific output
+
+---
+
+## License
+
+This project is licensed under the MIT License. See LICENSE for details.

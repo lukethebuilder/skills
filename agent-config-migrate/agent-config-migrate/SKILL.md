@@ -1,8 +1,18 @@
 ---
 name: agent-config-migrate
-description: Audits your CLAUDE.md and Claude Code configuration, then generates a migration plan to the skills+hooks architecture. Classifies each section as invariant, workflow, or router. Outputs token savings estimate, stub skill files, and hook boilerplate. Use when CLAUDE.md exceeds 300 lines, skills aren't triggering reliably, or on "audit CLAUDE.md", "refactor my config", "slim down CLAUDE.md", "skills not triggering".
+description: Audits your CLAUDE.md and Claude Code configuration, then generates
+  a migration plan to the skills+hooks architecture. Classifies each section as
+  invariant (keep), workflow (extract to skill stub), or router (extract to
+  UserPromptSubmit hook). Outputs token savings estimate, stub skill files, and
+  hook boilerplate for reliable skill activation. Run /agent-config-migrate for
+  a report-only audit, or /agent-config-migrate --apply to generate the output
+  files. Use when CLAUDE.md exceeds 300 lines, skills aren't triggering reliably,
+  or you want to adopt modular agent configuration. Triggers on "audit CLAUDE.md",
+  "refactor my config", "slim down CLAUDE.md", "skills not triggering".
+disable-model-invocation: true
 allowed-tools: Read Glob Write Bash
 ---
+
 # agent-config-migrate
 
 Audits CLAUDE.md and generates a migration plan to the skills+hooks architecture.

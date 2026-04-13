@@ -59,14 +59,18 @@ or modified. Ask for confirmation.
 On confirmation:
 1. Write .claude/skills/{slug}/SKILL.md for each extracted workflow, using
    the skill stub template in references/templates.md.
-2. Write .claude/hooks/user-prompt-submit.json using the hook template in
-   references/templates.md. Populate {SKILL_LIST} with the actual skill
-   names from step 1.
+2. Merge the hook configuration from references/templates.md into
+   .claude/settings.json under the `hooks.UserPromptSubmit` key. If
+   settings.json does not exist, create it. If a UserPromptSubmit hook
+   already exists, append to its hooks array rather than overwriting.
+   Populate {SKILL_LIST} with the actual skill names from step 1.
 3. Rewrite CLAUDE.md: keep invariant sections verbatim, replace each
    extracted section with a one-line @reference comment, add an
    "Available Skills" section listing all skill slugs.
 4. Create CLAUDE.md.bak (copy of original) before rewriting.
 5. Output a summary: files created, lines before/after, token savings.
+   End the summary with: "Restart Claude Code to pick up the rewritten
+   CLAUDE.md — your current session still has the old context loaded."
 
 ## Quality rules
 

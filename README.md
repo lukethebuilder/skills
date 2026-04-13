@@ -27,7 +27,7 @@ Runs a structured audit of your `CLAUDE.md` and generates a migration plan to th
    - `invariant`: universal constraints to keep in `CLAUDE.md`
    - `workflow`: multi-step procedures to extract as skill stubs
    - `router`: conditional routing logic to extract to a `UserPromptSubmit` hook
-   - `bloat/meta`: scaffolding, notes, or spec content that can be deleted
+   - `unclassified`: sections that don't fit cleanly — flagged for manual review
 3. **Report** — outputs a section-by-section table with estimated token savings
 4. **Generate** (with `--apply`) — writes the extracted skill stubs, the hook file, and a rewritten slim `CLAUDE.md`; backs up the original as `CLAUDE.md.bak`
 
@@ -47,7 +47,9 @@ Install into a Claude Code project using the `skills` CLI with the `--agent clau
 npx skills@latest add lukethebuilder/skills/agent-config-migrate --agent claude
 ```
 
-By default, `skills` installs into `.agents/skills/`. The `--agent claude` flag maps the install to `.claude/skills/` instead, which is where Claude Code looks for skills.
+By default, `skills` installs into `.agents/skills/`. The `--agent claude` flag maps the install to `.claude/skills/` instead, which is where Claude Code looks for project-level skills.
+
+> **Install path note:** The `npx` command installs to `.claude/skills/agent-config-migrate/SKILL.md` inside your project. If you install globally (manually copying to `~/.claude/`), the path is `~/.claude/agent-config-migrate/SKILL.md` — no `skills/` subdirectory. Both locations are valid; Claude Code checks both.
 
 ---
 
@@ -78,7 +80,7 @@ The skill will ask for confirmation before writing anything.
 | `CLAUDE.md.bak` | Backup of your original `CLAUDE.md` |
 | `CLAUDE.md` | Rewritten: invariants kept verbatim, workflows replaced with `@reference` comments, "Available Skills" index added |
 | `.claude/skills/<slug>/SKILL.md` | One stub per extracted workflow |
-| `.claude/hooks/user-prompt-submit.*` | Hook file wiring extracted routing logic to skill names |
+| `.claude/settings.json` | Hook entry added under `hooks.UserPromptSubmit`, wiring routing logic to skill names |
 
 ---
 
@@ -97,7 +99,36 @@ The skill will ask for confirmation before writing anything.
 - **Always commit before running `--apply`.** The skill creates `CLAUDE.md.bak`, but a git snapshot is safer than a backup file.
 - The classifier works best when your `CLAUDE.md` uses reasonably clear headings. Freeform prose or heavily nested sections may produce unclassified output that you'll need to sort manually.
 - Review the generated skill stubs before committing. Auto-generated `description` fields are drafts — they'll work, but you'll likely want to refine the trigger phrases.
-- Review the generated hook file. The routing prompt is populated from your extracted router sections, but you should verify the skill names and conditions are correct.
+- Review the hook entry added to `.claude/settings.json`. The routing prompt is populated from your extracted router sections, but you should verify the skill names and conditions are correct.
+
+---
+
+## Testing Notes
+
+If you're trying this out, one thing to set expectations on before you run it:
+
+**Output quality scales with heading structure.** The classifier reads your `CLAUDE.md` section by section. If your file uses clear `##` headings with descriptive names, you'll get a clean classification table. If it's mostly freeform prose, deeply nested bullets, or a wall of text under one heading, the skill will flag large chunks as `unclassified` and ask you to sort them manually — that's expected behavior, not a bug.
+
+A `CLAUDE.md` that looks like this will classify well:
+
+```markdown
+## Commit Workflow
+1. Run tests
+2. ...
+
+## Code Style
+- Always use TypeScript strict mode
+```
+
+One that looks like this will produce noisy output:
+
+```markdown
+Here are some things to keep in mind when working with this codebase. You should
+always run tests before committing, prefer TypeScript strict mode, and when you're
+writing new components make sure to...
+```
+
+If your config is in the second camp, the audit report is still useful — but treat the `unclassified` items as a manual cleanup task rather than a migration output.
 
 ---
 

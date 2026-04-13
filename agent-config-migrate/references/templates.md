@@ -52,8 +52,7 @@ Run `/agent-config-migrate --apply` to generate the output files listed above.
 ---
 description: "TODO: {paste the trigger phrase from the extracted section title}.
   Use when {describe the task condition}. Triggers on {list 3-5 phrases}."
-disable-model-invocation: true
-allowed-tools: []
+allowed-tools: [] # TODO: add tools this skill needs (e.g. Read, Bash, Edit, Glob)
 ---
 
 # {Skill Name}
@@ -75,16 +74,20 @@ Review the description field above — it was auto-generated and may need refine
 
 ## Template 3: UserPromptSubmit Hook
 
+Merge this into `.claude/settings.json` under the `hooks` key. Claude Code does not
+load hooks from separate files — all hooks must live in `settings.json`. If a
+`UserPromptSubmit` entry already exists, append to its `hooks` array rather than
+overwriting it.
+
 ```json
 {
   "hooks": {
     "UserPromptSubmit": [
       {
-        "matcher": ".*",
         "hooks": [
           {
-            "type": "prompt",
-            "prompt": "Before responding, check if any of the following skills in .claude/skills/ is relevant to this request: {SKILL_LIST}. If one matches, load and follow its SKILL.md. Extracted routing rules to apply: {ROUTER_RULES}. If no skill applies, proceed normally."
+            "type": "command",
+            "command": "echo 'Before responding, check if any of the following skills in .claude/skills/ is relevant to this request: {SKILL_LIST}. Extracted routing rules to apply: {ROUTER_RULES}. If no skill applies, proceed normally.'"
           }
         ]
       }
@@ -93,4 +96,4 @@ Review the description field above — it was auto-generated and may need refine
 }
 ```
 
-**Note:** `{SKILL_LIST}` is populated with real skill slugs at generation time. `{ROUTER_RULES}` is populated with the extracted router-type sections. Both are substituted by the skill during Phase 4 generation.
+**Note:** `{SKILL_LIST}` is populated with real skill slugs at generation time. `{ROUTER_RULES}` is populated with the extracted router-type sections. Both are substituted by the skill during Phase 4 generation. The hook's stdout is injected as context before Claude processes the user's prompt.
